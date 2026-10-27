@@ -90,7 +90,8 @@ fig.update_layout(
     xaxis=dict(range=[MIN, MAX], title="x", fixedrange=True, dtick=2),
     yaxis=dict(range=[MIN, MAX], title="y", fixedrange=True, scaleanchor="x", dtick=2),
     height=600, dragmode=False, margin=dict(l=10, r=10, t=10, b=10),
-    legend=dict(orientation="h", y=-0.12),
+    # Three entries per row: the original items on the first row, the new ones on the second.
+    legend=dict(orientation="h", y=-0.12, entrywidthmode="fraction", entrywidth=0.33),
 )
 
 event = st.plotly_chart(
