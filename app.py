@@ -2,7 +2,7 @@ import numpy as np
 import plotly.graph_objects as go
 import streamlit as st
 
-st.set_page_config(page_title="Linear Regression with Outliers", layout="centered")
+st.set_page_config(page_title="Linear Regression with Outliers", layout="wide")
 
 MIN, MAX = 0.0, 10.0  # both axes run from 0 to 10
 
@@ -98,13 +98,18 @@ fig.update_layout(
     legend=dict(orientation="h", y=-0.12, entrywidthmode="fraction", entrywidth=0.33),
 )
 
-event = st.plotly_chart(
-    fig,
-    key=f"chart_{st.session_state.chart_version}",
-    on_select="rerun",
-    selection_mode="points",
-    use_container_width=True,
-)
+# Graph on the left, results on the right. Streamlit stacks the columns
+# (graph first, results below) automatically on a phone-width screen.
+left, right = st.columns([3, 2], gap="large")
+
+with left:
+    event = st.plotly_chart(
+        fig,
+        key=f"chart_{st.session_state.chart_version}",
+        on_select="rerun",
+        selection_mode="points",
+        use_container_width=True,
+    )
 
 # ---------- handle a click ----------
 pts = event.selection.points if event and event.selection else []
@@ -114,10 +119,11 @@ if pts:
     st.session_state.chart_version += 1   # fresh chart => selection is cleared
     st.rerun()
 
-if st.button("Clear new point", disabled=new is None):
-    st.session_state.new_point = None
-    st.session_state.chart_version += 1
-    st.rerun()
+with left:
+    if st.button("Clear new point", disabled=new is None):
+        st.session_state.new_point = None
+        st.session_state.chart_version += 1
+        st.rerun()
 
 # ---------- results table ----------
 rows = [("Slope", "slope"), ("Y-intercept", "intercept"), ("r", "r"),
@@ -132,9 +138,9 @@ for label, key in rows:
         lines.append(f"| {label} | {s0[key]:.3f} | {s1[key]:.3f} | {s1[key] - s0[key]:+.3f} |")
     else:
         lines.append(f"| {label} | {s0[key]:.3f} | — | — |")
-st.markdown("\n".join(lines))
-
-if new:
-    st.caption(f"New point at ({new[0]:.2f}, {new[1]:.2f})")
-else:
-    st.caption("Click the graph to add a point.")
+with right:
+    st.markdown("\n".join(lines))
+    if new:
+        st.caption(f"New point at ({new[0]:.2f}, {new[1]:.2f})")
+    else:
+        st.caption("Click the graph to add a point.")
