@@ -87,8 +87,12 @@ if new:
                              name="New mean (x̄, ȳ)", hoverinfo="skip"))
 
 fig.update_layout(
-    xaxis=dict(range=[MIN, MAX], title="x", fixedrange=True, dtick=2),
-    yaxis=dict(range=[MIN, MAX], title="y", fixedrange=True, scaleanchor="x", dtick=2),
+    # constrain="domain" keeps both ranges locked at 0-10 (the plot area shrinks to stay square
+    # instead of Plotly stretching the x range to fit the page width).
+    xaxis=dict(range=[MIN, MAX], autorange=False, title="x", fixedrange=True, dtick=2,
+               constrain="domain"),
+    yaxis=dict(range=[MIN, MAX], autorange=False, title="y", fixedrange=True, dtick=2,
+               scaleanchor="x", constrain="domain"),
     height=600, dragmode=False, margin=dict(l=10, r=10, t=10, b=10),
     # Three entries per row: the original items on the first row, the new ones on the second.
     legend=dict(orientation="h", y=-0.12, entrywidthmode="fraction", entrywidth=0.33),
